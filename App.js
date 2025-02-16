@@ -2,7 +2,9 @@ import { StatusBar } from "expo-status-bar";
 import { StyleSheet, Text, View, ImageBackground, SafeAreaView } from "react-native";
 import StartGameScreen from "./screens/StartGameScreen";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from "react";
+import { useFonts } from "expo-font";
+import { useState, useCallback } from "react";
+import * as SplashScreen from 'expo-splash-screen';
 import GameScreen from "./screens/GameScreen";
 import Colors from "./constants/colors";
 import GameOverScreen from "./screens/GameOverScreen";
@@ -10,6 +12,21 @@ import GameOverScreen from "./screens/GameOverScreen";
 export default function App() {
   const [userNumber, setUserNumber] = useState();
   const [gameIsOver, setGameIsOver] = useState(true);
+
+  const [fontsLoaded] = useFonts({
+    "open-sans": require("./assets/fonts/OpenSans-Regular.ttf"),
+    "open-sans-bold": require("./assets/fonts/OpenSans-Bold.ttf"),
+  });
+
+  const onLayoutRootView = useCallback(async () => {
+    if (fontsLoaded) {
+      await SplashScreen.hideAsync();
+    }
+  }, [fontsLoaded]);
+
+  if (!fontsLoaded) {
+    return null;
+  }
 
   function pickedNumberHandler(pickedNumber) {
     setUserNumber(pickedNumber);
